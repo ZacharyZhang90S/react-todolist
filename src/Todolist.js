@@ -8,6 +8,9 @@ class Todolist extends Component {
       inputValue: 'hello',
       list: [],
     };
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleBtnClick = this.handleBtnClick.bind(this);
+    this.handleItemDelete = this.handleItemDelete.bind(this);
   }
 
   render() {
@@ -16,48 +19,50 @@ class Todolist extends Component {
         <div>
           <input
             value={this.state.inputValue}
-            onChange={this.handleInputChange.bind(this)}
+            onChange={this.handleInputChange}
           />
           <button
-            onClick={this.handleBtnClick.bind(this)}
+            onClick={this.handleBtnClick}
           >提交
           </button>
         </div>
         <ul>
-          {
-            this.state.list.map((item, index) => {
-              return <TodoItem
-                content={item}
-                index={index}
-                deleteItem={this.handleItemDelete.bind(this)}
-              />;
-              // return <li key={index} onClick={this.handleItemDelete.bind(this, index)}>{item}</li>
-            })
-          }
+          {this.getItem()}
         </ul>
       </Fragment>
     );
   }
 
-  handleInputChange(e) {
-    this.setState({
-      inputValue: e.target.value,
+  getItem() {
+    return this.state.list.map((item, index) => {
+      return <TodoItem
+        content={item}
+        key = {index}
+        index={index}
+        deleteItem={this.handleItemDelete}
+      />;
     });
+  }
+
+  handleInputChange(e) {
+    const value = e.target.value;
+    this.setState(() => ({
+      inputValue: value,
+    }));
   }
 
   handleBtnClick() {
-    this.setState({
-      list: [...this.state.list, this.state.inputValue],
+    this.setState((prevState) => ({
+      list: [...prevState.list, prevState.inputValue],
       inputValue: '',
-    });
+    }));
   }
 
   handleItemDelete(index) {
-    const list = [...this.state.list];
-    list.splice(index, 1);
-
-    this.setState({
-      list: list,
+    this.setState((prevState) => {
+      const list = [...prevState.list];
+      list.splice(index, 1);
+      return {list};
     });
   }
 }
